@@ -24,6 +24,7 @@ ansible-galaxy collection install azure.azcollection
 You can authenticate to Azure using a service principal or Azure CLI. The most common method is by creating a service principal with proper permissions.
 
 #### Option 1: Create a Service Principal
+## https://www.youtube.com/watch?v=Kf1Tai_BkWU
 1. **Create a Service Principal**: You can create it using Azure CLI with the following command:
    ```bash
    az ad sp create-for-rbac --name AnsibleSP --role Contributor --scopes /subscriptions/<your-subscription-id>
