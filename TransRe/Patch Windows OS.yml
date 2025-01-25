@@ -1,0 +1,28 @@
+---
+- name: Patch Windows OS from Attached Disk
+  hosts: windows
+  gather_facts: no
+  tasks:
+  
+    - name: Check Available Drives
+      ansible.windows.win_shell: "Get-PSDrive -PSProvider FileSystem | Select-Object -ExpandProperty Root"
+      register: drive_list
+
+    - name: Find the Patch Executable
+      ansible.windows.win_find:
+        paths: "{{ item }}"
+        patterns: "*.exe"
+      with_items: "{{ drive_list.stdout_lines }}"
+      register: patch_files
+      when: "'D:\' in drive_list.stdout_lines or 'E:\' in drive_list.stdout_lines"
+
+    - name: Execute the Patch
+      ansible.windows.win_command: "{{ item.path }} /silent"
+      with_items: "{{ patch_files.files }}"
+      when: patch_files.matched > 0
+
+    - name: Reboot Windows (if required)
+      ansible.windows.win_reboot:
+        reboot_timeout: 600
+      when: patch_files.matched > 0
+...
